@@ -2,7 +2,7 @@
 {
     public class RequestModel
     {
-        public int Expiry { get; set; }
+        public int ExpiryMonth { get; set; }
         public double RequestedMoney { get; set; }
     }
 }
