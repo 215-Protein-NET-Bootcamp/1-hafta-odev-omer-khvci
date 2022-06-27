@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PaymentAPI.Models;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PaymentAPI.Controllers
 {
-    [Microsoft.AspNetCore.Components.Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class PaymentController:ControllerBase
     {
@@ -16,7 +16,7 @@ namespace PaymentAPI.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("gettotal")]
+        [HttpPost("TotalMoney")]
         public Task<ResponseModel> TotalMoney([FromBody]RequestModel model)
         {
             var interestRate= _configuration.GetValue<double>("InterestRate");
