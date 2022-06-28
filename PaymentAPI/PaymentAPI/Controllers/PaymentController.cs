@@ -20,8 +20,8 @@ namespace PaymentAPI.Controllers
         [HttpPost("TotalMoney")]
         public Task<ResponseModel> TotalMoney([FromBody] RequestModel model)
         {
-            var interestRate = _configuration.GetValue<double>("InterestRate");
-            var totalInterest = model.RequestedMoney * (interestRate * model.ExpiryMonth / 120);
+            var interestRate = _configuration.GetValue<double>("InterestRate")/100;
+            var totalInterest = model.RequestedMoney * (Math.Pow(1 + interestRate, model.ExpiryMonth)-1);
             var totalAmount = totalInterest + model.RequestedMoney;
             var response = new ResponseModel()
             {
@@ -30,17 +30,16 @@ namespace PaymentAPI.Controllers
             };
             return Task.FromResult(response);
         }
-        [HttpPost]
+        [HttpPost("MonthlyPayment")]
         public Task<List<ReponseListModel>> PaymentList([FromBody] RequestModel model)
         {
-            var interestRate = _configuration.GetValue<double>("InterestRate");
-            var totalInterest = model.RequestedMoney * (interestRate * model.ExpiryMonth / 120);
-            var totalAmount = totalInterest + model.RequestedMoney;
-            var a = totalAmount / model.ExpiryMonth;
+            var interestRate = _configuration.GetValue<double>("InterestRate")/100;
+            var totalInterest = (Math.Pow(1 + interestRate, model.ExpiryMonth) - 1);
+            var monthPrice = ((totalInterest + 1) * model.RequestedMoney)/(totalInterest * 100);
             var res = new List<ReponseListModel>();
             for (int i = 1; i <= model.ExpiryMonth; i++)
             {
-                res.Add(new ReponseListModel() { Month = i + ".Ay", Price = Math.Round(a,2) });
+                res.Add(new ReponseListModel() { Month = i + ".Taksit", Price = Math.Round(monthPrice, 2) });
             }
 
             return Task.FromResult(res);
