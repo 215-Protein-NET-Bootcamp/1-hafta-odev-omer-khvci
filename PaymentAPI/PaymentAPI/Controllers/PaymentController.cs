@@ -21,12 +21,12 @@ namespace PaymentAPI.Controllers
         public Task<ResponseModel> TotalMoney([FromBody] RequestModel model)
         {
             var interestRate = _configuration.GetValue<double>("InterestRate")/100;
-            var totalInterest = model.RequestedMoney * (Math.Pow(1 + interestRate, model.ExpiryMonth)-1);
-            var totalAmount = totalInterest + model.RequestedMoney;
+            var totalInterest = (Math.Pow(1 + interestRate, model.ExpiryMonth)-1);
+            var totalAmount = (((totalInterest + 1) * model.RequestedMoney) / (totalInterest * 100))*model.ExpiryMonth;
             var response = new ResponseModel()
             {
                 TotalAmount = Math.Round(totalAmount,2),
-                TotalInterest = Math.Round(totalInterest,2),
+                TotalInterest = Math.Round(totalInterest*model.RequestedMoney,2),
             };
             return Task.FromResult(response);
         }
@@ -35,14 +35,17 @@ namespace PaymentAPI.Controllers
         {
             var interestRate = _configuration.GetValue<double>("InterestRate")/100;
             var totalInterest = (Math.Pow(1 + interestRate, model.ExpiryMonth) - 1);
+            var monthIsterest = model.RequestedMoney * interestRate;
             var monthPrice = ((totalInterest + 1) * model.RequestedMoney)/(totalInterest * 100);
-            var res = new List<ReponseListModel>();
+            var response = new List<ReponseListModel>();
             for (int i = 1; i <= model.ExpiryMonth; i++)
             {
-                res.Add(new ReponseListModel() { Month = i + ".Taksit", Price = Math.Round(monthPrice, 2) });
+                monthIsterest = model.RequestedMoney * interestRate;
+                model.RequestedMoney = model.RequestedMoney - (monthPrice - monthIsterest);
+                response.Add(new ReponseListModel() { Month = i + ".Taksit", Price = Math.Round(monthPrice, 2), RemainingPayment = Math.Round(model.RequestedMoney, 2), MonthlyInterestPaid = Math.Round(monthIsterest, 2)  });
             }
 
-            return Task.FromResult(res);
+            return Task.FromResult(response);
 
 
         }
