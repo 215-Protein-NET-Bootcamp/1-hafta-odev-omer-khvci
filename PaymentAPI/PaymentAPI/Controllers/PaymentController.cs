@@ -26,7 +26,7 @@ namespace PaymentAPI.Controllers
             var response = new ResponseModel()
             {
                 TotalAmount = Math.Round(totalAmount,2),
-                TotalInterest = Math.Round(totalInterest*model.RequestedMoney,2),
+                TotalInterest = Math.Round(totalAmount-model.RequestedMoney,2),
             };
             return Task.FromResult(response);
         }
