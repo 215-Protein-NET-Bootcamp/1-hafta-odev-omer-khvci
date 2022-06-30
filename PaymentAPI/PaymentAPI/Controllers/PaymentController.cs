@@ -42,7 +42,7 @@ namespace PaymentAPI.Controllers
             {
                 monthIsterest = model.RequestedMoney * interestRate;
                 model.RequestedMoney = model.RequestedMoney - (monthPrice - monthIsterest);
-                response.Add(new ReponseListModel() { Month = i + ".Taksit", Price = Math.Round(monthPrice, 2), RemainingPayment = Math.Round(model.RequestedMoney, 2), MonthlyInterestPaid = Math.Round(monthIsterest, 2)  });
+                response.Add(new ReponseListModel() { Month = i + ".Installment", Price = Math.Round(monthPrice, 2), RemainingPayment = Math.Round(model.RequestedMoney, 2), MonthlyInterestPaid = Math.Round(monthIsterest, 2)  });
             }
 
             return Task.FromResult(response);
